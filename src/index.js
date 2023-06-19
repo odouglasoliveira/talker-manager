@@ -1,9 +1,16 @@
 const express = require('express');
+const fs = require('fs');
 const crypto = require('crypto');
 const readFileHelper = require('./helpers/readFileHelper');
 const verifyTalker = require('./middlewares/verifyTalker');
 const verifyEmail = require('./middlewares/verifyEmail');
 const verifyPwd = require('./middlewares/verifyPwd');
+const verifyToken = require('./middlewares/verifyToken');
+const verifyName = require('./middlewares/verifyName');
+const verifyAge = require('./middlewares/verifyAge');
+const verifyTalk = require('./middlewares/verifyTalk');
+const verifyRate = require('./middlewares/verifyRate');
+const verifyWatchedAt = require('./middlewares/verifyWatchedAt');
 
 const app = express();
 app.use(express.json());
@@ -31,6 +38,22 @@ app.get('/talker/:id', verifyTalker, async (req, res) => {
 app.post('/login', verifyEmail, verifyPwd, async (req, res) => {
   const token = crypto.randomBytes(8).toString('hex');
   res.status(200).json({ token });
+});
+
+app.post('/talker', verifyToken, verifyName, verifyAge, verifyTalk, verifyWatchedAt, verifyRate,
+  async (req, res) => {
+  const { name, age, talk } = req.body;
+  const data = await readFileHelper();
+  const newTalker = {
+    name,
+    age,
+    id: data.length + 1,
+    talk,
+  };
+  data.push(newTalker);
+  const jsonData = JSON.stringify(data);
+  fs.writeFileSync('src/talker.json', jsonData, 'utf-8');
+  res.status(201).json(newTalker);
 });
 
 app.listen(PORT, () => {
