@@ -1,5 +1,5 @@
 const express = require('express');
-const cryptoRandomString = require('crypto-random-string');
+const crypto = require('crypto');
 const readFileHelper = require('./helpers/readFileHelper');
 const verifyTalker = require('./middlewares/verifyTalker');
 const verifyEmail = require('./middlewares/verifyEmail');
@@ -29,7 +29,7 @@ app.get('/talker/:id', verifyTalker, async (req, res) => {
 });
 
 app.post('/login', verifyEmail, verifyPwd, async (req, res) => {
-  const token = await cryptoRandomString(16);
+  const token = crypto.randomBytes(8).toString('hex');
   res.status(200).json({ token });
 });
 
