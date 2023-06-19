@@ -1,4 +1,5 @@
 const express = require('express');
+const cryptoRandomString = require('crypto-random-string');
 const readFileHelper = require('./helpers/readFileHelper');
 const verifyTalker = require('./middlewares/verifyTalker');
 
@@ -23,6 +24,13 @@ app.get('/talker/:id', verifyTalker, async (req, res) => {
   const { id } = req.params;
   const talker = data.find((t) => t.id === Number(id));
   res.status(200).json(talker);
+});
+
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+  console.log(email, password);
+  const token = await cryptoRandomString(16);
+  res.status(200).json({ token });
 });
 
 app.listen(PORT, () => {
