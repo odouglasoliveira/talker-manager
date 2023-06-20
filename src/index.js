@@ -56,6 +56,27 @@ app.post('/talker', verifyToken, verifyName, verifyAge, verifyTalk, verifyWatche
   res.status(201).json(newTalker);
 });
 
+app.put('/talker/:id', verifyTalker, verifyToken, verifyName, verifyAge, verifyTalk,
+  verifyWatchedAt,
+  verifyRate,
+  async (req, res) => {
+  const { name, age, talk } = req.body;
+  const { id } = req.params;
+  const idNumber = Number(id);
+  const data = await readFileHelper();
+  const newData = data.filter((t) => t.id !== Number(id));
+  const newTalker = {
+    name,
+    age,
+    id: idNumber,
+    talk,
+  };
+  newData.push(newTalker);
+  const jsonData = JSON.stringify(newData);
+  fs.writeFileSync('src/talker.json', jsonData, 'utf-8');
+  res.status(200).json(newTalker);
+});
+
 app.listen(PORT, () => {
   console.log('Online');
 });
