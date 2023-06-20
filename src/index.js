@@ -23,6 +23,13 @@ app.get('/', (_request, response) => {
   response.status(HTTP_OK_STATUS).send();
 });
 
+app.get('/talker/search', verifyToken, async (req, res) => {
+  const { q } = req.query;
+  const data = await readFileHelper();
+  const newData = data.filter((d) => d.name.includes(q));
+  return res.status(200).json(newData);
+});
+
 app.get('/talker', async (req, res) => {
   const data = await readFileHelper();
   res.status(200).json(data);
