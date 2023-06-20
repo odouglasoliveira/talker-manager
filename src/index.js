@@ -77,6 +77,16 @@ app.put('/talker/:id', verifyTalker, verifyToken, verifyName, verifyAge, verifyT
   res.status(200).json(newTalker);
 });
 
+app.delete('/talker/:id', verifyToken, verifyTalker, async (req, res) => {
+  const { id } = req.params;
+  const idNumber = Number(id);
+  const data = await readFileHelper();
+  const newData = data.filter((t) => t.id !== idNumber);
+  const jsonData = JSON.stringify(newData);
+  fs.writeFileSync('src/talker.json', jsonData, 'utf-8');
+  res.sendStatus(204);
+});
+
 app.listen(PORT, () => {
   console.log('Online');
 });
