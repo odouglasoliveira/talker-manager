@@ -2,15 +2,16 @@ const express = require('express');
 const fs = require('fs');
 const crypto = require('crypto');
 const readFileHelper = require('./helpers/readFileHelper');
-const verifyTalker = require('./middlewares/verifyTalker');
-const verifyEmail = require('./middlewares/verifyEmail');
-const verifyPwd = require('./middlewares/verifyPwd');
-const verifyToken = require('./middlewares/verifyToken');
-const verifyName = require('./middlewares/verifyName');
-const verifyAge = require('./middlewares/verifyAge');
-const verifyTalk = require('./middlewares/verifyTalk');
-const verifyRate = require('./middlewares/verifyRate');
-const verifyWatchedAt = require('./middlewares/verifyWatchedAt');
+const { 
+  verifyAge,
+  verifyEmail,
+  verifyName,
+  verifyPwd,
+  verifyRate,
+  verifyTalk,
+  verifyTalker,
+  verifyToken,
+  verifyWatchedAt } = require('./middlewares');
 
 const app = express();
 app.use(express.json());
@@ -86,9 +87,8 @@ app.put('/talker/:id', verifyTalker, verifyToken, verifyName, verifyAge, verifyT
 
 app.delete('/talker/:id', verifyToken, verifyTalker, async (req, res) => {
   const { id } = req.params;
-  const idNumber = Number(id);
   const data = await readFileHelper();
-  const newData = data.filter((t) => t.id !== idNumber);
+  const newData = data.filter((t) => t.id !== Number(id));
   const jsonData = JSON.stringify(newData);
   fs.writeFileSync('src/talker.json', jsonData, 'utf-8');
   res.sendStatus(204);
